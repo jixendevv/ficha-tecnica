@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Proposta Tècnica - Auditoria d'Eficiència</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+        }
+        header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        header p { font-size: 1.1rem; opacity: 0.9; }
+        .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 2rem; margin-top: 1rem; font-size: 0.9rem; }
+        .card { background: var(--bg-card); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border); }
+        .card-icon { width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-title { font-size: 1.5rem; font-weight: 600; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .stat-box { background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 0.75rem; padding: 1.5rem; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; }
+        .stat-box.success { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+        .stat-box.success .stat-value { color: var(--secondary); }
+        .stat-box.warning { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+        .stat-box.warning .stat-value { color: var(--warning); }
+        .stat-box.danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+        .stat-box.danger .stat-value { color: var(--danger); }
+        .progress-container { margin: 1rem 0; }
+        .progress-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .progress-bar { height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+        .progress-fill.low { background: linear-gradient(90deg, #10b981, #34d399); }
+        .progress-fill.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .progress-fill.high { background: linear-gradient(90deg, #ef4444, #f87171); }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: rgba(37, 99, 235, 0.1); font-weight: 600; color: var(--primary); }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        .comparison-chart { display: flex; align-items: flex-end; justify-content: center; gap: 3rem; padding: 2rem; background: rgba(0,0,0,0.2); border-radius: 0.75rem; margin: 1.5rem 0; }
+        .bar-container { text-align: center; }
+        .bar { width: 80px; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1rem; font-weight: 700; font-size: 1.1rem; transition: height 0.5s ease; }
+        .bar.my-pc { background: linear-gradient(180deg, var(--primary) 0%, #7c3aed 100%); height: 200px; }
+        .bar.other-pc { background: linear-gradient(180deg, var(--secondary) 0%, #059669 100%); height: 160px; }
+        .bar-label { margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted); }
+        .proposal-item { background: rgba(0,0,0,0.2); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid var(--primary); }
+        .proposal-item h4 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .proposal-item p { color: var(--text-muted); font-size: 0.95rem; }
+        .budget-total { background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%); color: white; font-weight: 700; font-size: 1.2rem; }
+        .budget-total td { border-bottom: none; }
+        .os-card { background: rgba(0,0,0,0.2); border-radius: 0.75rem; padding: 1.5rem; text-align: center; border: 2px solid transparent; transition: all 0.3s ease; }
+        .os-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .os-card img { width: 64px; height: 64px; margin-bottom: 1rem; }
+        .os-card h4 { margin-bottom: 0.5rem; }
+        .os-card p { color: var(--text-muted); font-size: 0.85rem; }
+        .terminal { background: #0d1117; border-radius: 0.75rem; overflow: hidden; font-family: 'Consolas', 'Monaco', monospace; margin: 1rem 0; }
+        .terminal-header { background: #161b22; padding: 0.75rem 1rem; display: flex; gap: 0.5rem; }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27ca40; }
+        .terminal-content { padding: 1rem; font-size: 0.85rem; line-height: 1.8; color: #c9d1d9; }
+        .terminal-content .command { color: #58a6ff; }
+        .terminal-content .output { color: #8b949e; }
+        .terminal-content .highlight { color: #7ee787; }
+        footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem; }
+        footer strong { color: var(--text); }
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            header h1 { font-size: 1.8rem; }
+            .card { padding: 1.5rem; }
+            .comparison-chart { flex-direction: column; align-items: center; }
+            .bar { width: 100%; max-width: 200px; }
+        }
+        @media print {
+            body { background: white; color: black; }
+            .card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; }
+            header { background: #2563eb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Informe de Proposta Tècnica</h1>
+            <p>Auditoria d'Eficiència del Sistema</p>
+            <span class="badge">Activitat 4.6 - SMX</span>
+        </header>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon">💻</div>
+                <h2 class="card-title">1. Anàlisi del Sistema amb TOP</h2>
+            </div>
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                </div>
+                <div class="terminal-content">
+                    <span class="command">$ top - 13:22:19 up 3:32, 1 user, load average: 2,01, 1,78, 1,49</span><br>
+                    <span class="output">Tasks: </span><span class="highlight">346 total, 2 running, 343 sleeping, 0 stopped, 1 zombie</span><br>
+                    <span class="output">%Cpu(s): </span><span class="highlight">10,4 us, 2,6 sy, 0,0 ni, 85,6 id, 1,2 wa, 0,0 hi, 0,3 si</span><br>
+                    <span class="output">MiB Mem: </span><span class="highlight">15757,9 total, 6935,4 free, 4209,7 used, 4612,8 buff/cache</span><br>
+                    <span class="output">MiB Swap: </span><span class="highlight">4096,0 total, 4096,0 free, 0,0 used, 10307,0 avail Mem</span><br><br>
+                    <span class="output">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM   TIME+  COMMAND</span><br>
+                    <span class="output">20099 alumati   20   0   12,4g 696968 299644 S  49,2   4,3   5:57.88 firefox-bin</span><br>
+                    <span class="output">22487 alumati   20   0 3755280   1,1g 137340 R  45,5   7,2   2:33.12 Isolated Web Co</span><br>
+                    <span class="output"> 2158 alumati   20   0 5623996 261044 118016 S  21,3   1,6  12:45.80 cinnamon</span><br>
+                    <span class="output"> 1008 root      20   0 2099040 135544  85996 S  17,9   0,8  12:55.06 Xorg</span><br>
+                    <span class="output"> 2365 root      20   0 1555116 154204  94552 S   7,3   1,0   8:43.94 veyon-server</span><br>
+                </div>
+            </div>
+            <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">📈 Resum del Sistema (Net)</h3>
+            <div class="grid-3">
+                <div class="stat-box success">
+                    <div class="stat-value">14%</div>
+                    <div class="stat-label">Ús de CPU</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="stat-value">27%</div>
+                    <div class="stat-label">Ús de RAM (4.2GB/15.7GB)</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="stat-value">0%</div>
+                    <div class="stat-label">Ús de SWAP</div>
+                </div>
+            </div>
+            <h3 style="margin: 2rem 0 1rem; color: var(--primary);">🔍 Processos més consumidors</h3>
+            <div class="progress-container">
+                <div class="progress-label"><span>Firefox (navegador)</span><span>680 MB - 49.2% CPU</span></div>
+                <div class="progress-bar"><div class="progress-fill high" style="width: 85%"></div></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label"><span>Isolated Web Content (Firefox)</span><span>1.1 GB - 45.5% CPU</span></div>
+                <div class="progress-bar"><div class="progress-fill high" style="width: 80%"></div></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label"><span>Cinnamon (escriptori)</span><span>255 MB - 21.3% CPU</span></div>
+                <div class="progress-bar"><div class="progress-fill medium" style="width: 45%"></div></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label"><span>Xorg (servidor gràfic)</span><span>132 MB - 17.9% CPU</span></div>
+                <div class="progress-bar"><div class="progress-fill medium" style="width: 35%"></div></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-label"><span>Veyon Server</span><span>150 MB - 7.3% CPU</span></div>
+                <div class="progress-bar"><div class="progress-fill low" style="width: 20%"></div></div>
+            </div>
+            <div class="proposal-item" style="margin-top: 1.5rem; border-left-color: var(--warning);">
+                <h4>⚠️ Observació</h4>
+                <p>El navegador Firefox i els seus processos d'Isolated Web Content consumeixen una quantitat significativa de CPU (fins a 95% combinat). Es recomana tancar les pestanyes no necessàries per reduir el consum de recursos.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon">⚡</div>
+                <h2 class="card-title">2. Comparativa de Velocitat de Disc</h2>
+            </div>
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                </div>
+                <div class="terminal-content">
+                    <span class="command">$ dd if=/dev/zero of=testfile bs=1G count=1 oflag=dsync</span><br>
+                    <span class="output">1+0 records in</span><br>
+                    <span class="output">1+0 records out</span><br>
+                    <span class="output">1073741824 bytes (1.1 GB, 1.0 GiB) copied, 4.23 s, </span><span class="highlight">254 MB/s</span><br><br>
+                    <span class="command">$ rm testfile</span>
+                </div>
+            </div>
+            <div class="grid-2" style="margin-top: 1.5rem;">
+                <div class="stat-box">
+                    <div class="stat-value">254</div>
+                    <div class="stat-label">MB/s - El meu PC (SSD)</div>
+                </div>
+                <div class="stat-box success">
+                    <div class="stat-value">203</div>
+                    <div class="stat-label">MB/s - PC de referència</div>
+                </div>
+            </div>
+            <div class="comparison-chart">
+                <div class="bar-container">
+                    <div class="bar my-pc">254 MB/s</div>
+                    <div class="bar-label">El meu PC</div>
+                </div>
+                <div class="bar-container">
+                    <div class="bar other-pc">203 MB/s</div>
+                    <div class="bar-label">PC de referència</div>
+                </div>
+            </div>
+            <div class="proposal-item" style="border-left-color: var(--secondary);">
+                <h4>✅ Conclusió</h4>
+                <p><strong>El meu PC és un 25% més ràpid</strong> que el PC de referència en velocitat de lectura/escriptura de disc. Això és gràcies al disc SSD NVMe instal·lat, que ofereix velocitats significativament superiors als discs HDD tradicionals o SSD SATA.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon">🔧</div>
+                <h2 class="card-title">3. Proposta de Millora de Maquinari</h2>
+            </div>
+            <div class="proposal-item" style="border-left-color: var(--danger); background: rgba(239, 68, 68, 0.1);">
+                <h4>🔥 Problema Detectat</h4>
+                <p>L'equip presenta problemes de sobreescalfament que provoquen errors de software, ralentització del sistema i possibles reinicis inesperats. La temperatura de la CPU supera els 85°C sota càrrega normal.</p>
+            </div>
+            <h3 style="margin: 2rem 0 1rem; color: var(--primary);">💡 Solució 1: Millora de la Refrigeració</h3>
+            <div class="grid-2">
+                <div class="proposal-item">
+                    <h4>🌀 Dissipador de Torre</h4>
+                    <p>Substituir el dissipador de sèrie per un dissipador de torre amb heat pipes, que ofereix una capacitat de dissipació tèrmica molt superior.</p>
+                </div>
+                <div class="proposal-item">
+                    <h4>🌡️ Pasta Tèrmica</h4>
+                    <p>Aplicar pasta tèrmica d'alta qualitat (Arctic MX-4 o similar) per millorar la transferència de calor entre la CPU i el dissipador.</p>
+                </div>
+                <div class="proposal-item">
+                    <h4>💨 Ventiladors PWM</h4>
+                    <p>Instal·lar ventiladors PWM de 120mm per millorar el flux d'aire dins de la caixa (intake frontal + exhaust posterior).</p>
+                </div>
+                <div class="proposal-item">
+                    <h4>🧹 Neteja</h4>
+                    <p>Netejar la pols acumulada als ventiladors i dissipadors existents amb aire comprimit.</p>
+                </div>
+            </div>
+            <h3 style="margin: 2rem 0 1rem; color: var(--primary);">💻 Solució 2: Sistema Operatiu Lleuger</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1rem;">Com a alternativa o complement, es pot instal·lar un sistema operatiu més lleuger que redueixi el consum de recursos:</p>
+            <div class="grid-3">
+                <div class="os-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Logo-lubuntu.svg/64px-Logo-lubuntu.svg.png" alt="Lubuntu" onerror="this.style.display='none'">
+                    <h4>Lubuntu</h4>
+                    <p>Basat en Ubuntu amb entorn LXQt. Mínim 1GB RAM.</p>
+                </div>
+                <div class="os-card">
+                    <img src="https://antixlinux.com/wp-content/uploads/2017/03/antiX-logo.png" alt="antiX" onerror="this.style.display='none'">
+                    <h4>antiX</h4>
+                    <p>Ultra lleuger, ideal per a equips antics. 256MB RAM mínim.</p>
+                </div>
+                <div class="os-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Linux_Mint_logo_without_wordmark.svg/64px-Linux_Mint_logo_without_wordmark.svg.png" alt="Linux Mint" onerror="this.style.display='none'">
+                    <h4>Linux Mint XFCE</h4>
+                    <p>Equilibri entre funcionalitat i recursos. 2GB RAM recomanat.</p>
+                </div>
+            </div>
+            <h3 style="margin: 2rem 0 1rem; color: var(--primary);">💰 Pressupost (< 100€)</h3>
+            <table>
+                <thead>
+                    <tr><th>Component</th><th>Model</th><th>Preu</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Dissipador de torre</td><td>DeepCool GAMMAXX 400 V2</td><td>25,99 €</td></tr>
+                    <tr><td>Pasta tèrmica</td><td>Arctic MX-4 (4g)</td><td>7,49 €</td></tr>
+                    <tr><td>Ventilador frontal PWM</td><td>Arctic P12 PWM 120mm</td><td>8,99 €</td></tr>
+                    <tr><td>Ventilador posterior PWM</td><td>Arctic P12 PWM 120mm</td><td>8,99 €</td></tr>
+                    <tr><td>Aire comprimit</td><td>Spray 400ml</td><td>6,99 €</td></tr>
+                    <tr class="budget-total"><td colspan="2"><strong>TOTAL</strong></td><td><strong>58,45 €</strong></td></tr>
+                </tbody>
+            </table>
+            <div class="proposal-item" style="border-left-color: var(--secondary); margin-top: 1.5rem;">
+                <h4>📉 Resultats Esperats</h4>
+                <p>Amb aquestes millores s'espera reduir la temperatura de la CPU entre <strong>15-25°C</strong>, eliminant els errors de software causats pel sobreescalfament i millorant el rendiment general del sistema. El pressupost es manté <strong>sota els 100€</strong> tal com es requeria.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p><strong>Adil i Kristian</strong> - IFC21A</p>
+            <p>Activitat 4.6 - Auditoria d'Eficiència</p>
+            <p style="margin-top: 1rem;">Data de generació: <span id="date"></span></p>
+        </footer>
+    </div>
+    <script>
+        document.getElementById('date').textContent = new Date().toLocaleDateString('ca-ES', {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
+    </script>
+</body>
+</html>
